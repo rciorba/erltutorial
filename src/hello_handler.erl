@@ -13,8 +13,12 @@ init(_, Req, _Opts) ->
 handle(Req, State=#state{}) ->
     {ok, Req2} = cowboy_req:reply(
                    200,
-                   [{<<"content-type">>, <<"text/plain">>}],
-                   <<"Hello Erlang!">>,
+                   [{<<"Content-Type">>, <<"application/json">>}],
+                   jiffy:encode(
+                     {[
+                       {<<"Message">>, 
+                        <<"Hello jiffed Erlang!">>}
+                      ]}),
                    Req),
     {ok, Req2, State}.
 
