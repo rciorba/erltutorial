@@ -8,7 +8,8 @@
 		kernel,
 		stdlib,
                 cowboy,
-                jiffy
+                jiffy,
+                erlastic_search
 	]},
 	{mod, {erltutorial_app, []}},
 	{env, []}
