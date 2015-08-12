@@ -1,0 +1,14 @@
+_rel/*
+rel/*
+deps/*
+ebin/*
+
+erlang.mk
+.erlang.mk/*
+relx
+relx.config
+
+*.beam
+*.plt
+
+*~
