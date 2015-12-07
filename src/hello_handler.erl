@@ -41,9 +41,11 @@ handle(Req, State=#state{}) ->
     io:fwrite("~p ~n", [Resp]),
     case Resp of
         {ok, {{_Version, Status, _Reason}, Headers, Body}} ->
+            BinaryHeaders = [{binary:list_to_bin(H), binary:list_to_bin(V)} ||
+                                {H, V} <- Headers],
             {ok, Req2} = cowboy_req:reply(
                            Status,
-                           Headers ++ [{"X-Proxy", "yobwoc"}],
+                           BinaryHeaders ++ [{<<"X-Proxy">>, <<"yobwoc">>}],
                            Body,
                            Req),
             {ok, Req2, State};
