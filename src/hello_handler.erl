@@ -22,18 +22,19 @@ prepare_request(Req) ->
     {MethodBinary, _} = cowboy_req:method(Req),
     Method = method_bin_to_atom(MethodBinary),
     {HeadersBinary, _} = cowboy_req:headers(Req),
-    %% Headers = [{binary:bin_to_list(Header), binary:bin_to_list(Value)} ||
-    %%               {Header, Value} <- HeadersBinary],
+    {ok, Body, _} = cowboy_req:body(Req),
     Host = "http://localhost:5050",
     case Method of
         post ->
-            {Method, Host ++ binary_to_list(Path), HeadersBinary, <<>>, []};
+            io:fwrite("~p ~n", [Body]),
+            {Method, Host ++ binary_to_list(Path), HeadersBinary, Body, []};
         _ ->
             {Method, Host ++ binary_to_list(Path), HeadersBinary, <<>>, []}
     end.
 
 proxy_request(Req) ->
     {Method, Url, Headers, Body, Options} = prepare_request(Req),
+    io:fwrite("Body: ~p ~n", [Body]),
     hackney:request(Method, Url, Headers, Body, Options).
 
 handle(Req, State=#state{}) ->
@@ -41,8 +42,6 @@ handle(Req, State=#state{}) ->
     io:fwrite("~p ~n", [Resp]),
     case Resp of
         {ok, StatusCode, RespHeaders, ClientRef} ->
-            %% BinaryHeaders = [{binary:list_to_bin(H), binary:list_to_bin(V)} ||
-            %%                     {H, V} <- Headers],
             {ok, Body} = hackney:body(ClientRef),
             {ok, Req2} = cowboy_req:reply(
                            StatusCode,
